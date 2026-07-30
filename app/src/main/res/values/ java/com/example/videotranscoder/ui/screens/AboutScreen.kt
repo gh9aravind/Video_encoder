@@ -105,7 +105,7 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
                     LinkRow(
                         icon  = Icons.Default.Code,
                         label = "Source Code",
-                        url   = "https://github.com/YOUR_USERNAME/VideoTranscoder",
+                        url   = "https://github.com/gh9aravind/Video_encoder",
                         tint  = MaterialTheme.colorScheme.primary
                     )
                     HorizontalDivider(
