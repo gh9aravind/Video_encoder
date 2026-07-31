@@ -105,10 +105,10 @@ dependencies {
     // ── Kotlin Coroutines ─────────────────────────────────────────────────────
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
-    // FFmpegKit-full retired by original devs (April 2025).
-// Using actively-maintained community fork — same Java API (com.arthenica.ffmpegkit.*)
-// "full-gpl" variant needed because our commands use libx264 (GPL-licensed codec)
-implementation("com.antonkarpenko:ffmpeg-kit-full-gpl:2.0.1")
+    // Previous FFmpegKit fork wasn't built for Android's new 16KB memory-page
+    // requirement, causing an instant native crash on newer devices (like yours).
+    // This fork is specifically rebuilt with NDK r27d for 16KB page-size support.
+    implementation("io.github.jamaismagic.ffmpeg:ffmpeg-kit-lts-full-gpl-16kb:6.1.+")
 
     // ── Coil — video thumbnail loading ───────────────────────────────────────
     implementation("io.coil-kt:coil-compose:2.7.0")
