@@ -2,7 +2,9 @@ package com.example.videotranscoder
 
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
 import android.util.Log
+import java.io.File
 
 /**
  * CrashHandler — TEMPORARY DEBUGGING TOOL
@@ -24,10 +26,28 @@ class CrashHandler(private val appContext: Context) : Thread.UncaughtExceptionHa
         Thread.getDefaultUncaughtExceptionHandler()
 
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
-        try {
-            // Build the full, readable stack trace string
-            val fullTrace = Log.getStackTraceString(throwable)
+        // Build the full, readable stack trace string first — before anything
+        // else can go wrong.
+        val fullTrace = Log.getStackTraceString(throwable)
 
+        // ── Backup #1: Write the trace to a plain text file ────────────────
+        // Even if starting CrashActivity fails for any reason, this file
+        // survives on disk and can be pulled with a file manager app.
+        // Saved to the PUBLIC Downloads folder so it's visible without
+        // needing to browse the hidden Android/data folder.
+        try {
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS
+            )
+            val logFile = File(downloadsDir, "VideoTranscoder_crash_log.txt")
+            logFile.writeText(fullTrace)
+        } catch (ignored: Throwable) {
+            // Best-effort only — if this fails (e.g. no storage permission
+            // on some OEM skins), we still try the Activity route below.
+        }
+
+        // ── Backup #2: Show it on screen via CrashActivity ─────────────────
+        try {
             val intent = Intent(appContext, CrashActivity::class.java).apply {
                 putExtra(CrashActivity.EXTRA_STACK_TRACE, fullTrace)
                 // Required flags since we're starting an Activity from outside
@@ -36,7 +56,15 @@ class CrashHandler(private val appContext: Context) : Thread.UncaughtExceptionHa
             }
             appContext.startActivity(intent)
 
-        } catch (e: Exception) {
+            // ⚠️ CRITICAL FIX: startActivity() is asynchronous — it just
+            // *requests* that the system launch the activity, it does not
+            // wait for it to actually happen. If we kill this process
+            // immediately afterward, the request may never reach
+            // ActivityManagerService in time, and CrashActivity never opens.
+            // Sleeping briefly gives the system enough time to act on it.
+            Thread.sleep(1000)
+
+        } catch (e: Throwable) {
             // If even the crash handler fails, fall back to the system default
             defaultHandler?.uncaughtException(thread, throwable)
         } finally {
