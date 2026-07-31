@@ -3,37 +3,24 @@
 
     <!-- ── Storage Permissions ─────────────────────────────────────────────── -->
 
-    <!--
-        Android 13+ (API 33): Granular media permissions
-        We only need READ_MEDIA_VIDEO since SAF handles file picking
-    -->
     <uses-permission
         android:name="android.permission.READ_MEDIA_VIDEO"
         android:minSdkVersion="33" />
 
-    <!--
-        Android 10–12 (API 29–32): READ_EXTERNAL_STORAGE
-        SAF (ActivityResultContracts.OpenDocument) doesn't need this for file picking,
-        but we declare it for metadata reading fallback.
-    -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
-    <!--
-        Android 9 and below (API < 29): WRITE_EXTERNAL_STORAGE
-        Needed for saving output to external storage on older devices.
-    -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
-    <!-- Required for running FFmpeg in a Foreground Service (future enhancement) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <!-- ── App Entry Point ──────────────────────────────────────────────────── -->
     <application
+        android:name=".VideoTranscoderApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -41,11 +28,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VideoTranscoder"
         android:largeHeap="true">
-
-        <!--
-            largeHeap="true" is important for video processing apps.
-            FFmpegKit can be memory-intensive during transcoding operations.
-        -->
 
         <activity
             android:name=".MainActivity"
@@ -57,13 +39,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Allow the app to be opened with video files from other apps -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".CrashActivity"
+            android:exported="false" />
 
     </application>
 
