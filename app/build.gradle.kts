@@ -105,10 +105,10 @@ dependencies {
     // ── Kotlin Coroutines ─────────────────────────────────────────────────────
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
-    // ── FFmpegKit Full — all codecs (H.264, VP9, AAC, MP3, Opus, etc.) ───────
-    // NOTE: This is a large library (~150 MB native libs). ABI splits above help.
-    // GPLv3 licensed — see https://github.com/arthenica/ffmpeg-kit
-    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
+    // FFmpegKit-full retired by original devs (April 2025).
+// Using actively-maintained community fork — same Java API (com.arthenica.ffmpegkit.*)
+// "full-gpl" variant needed because our commands use libx264 (GPL-licensed codec)
+implementation("com.antonkarpenko:ffmpeg-kit-full-gpl:2.0.1")
 
     // ── Coil — video thumbnail loading ───────────────────────────────────────
     implementation("io.coil-kt:coil-compose:2.7.0")
