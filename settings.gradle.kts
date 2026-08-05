@@ -17,8 +17,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }  // ← ഇത് add ചെയ്യൂ
     }
 }
-
 rootProject.name = "VideoTranscoder"
 include(":app")
