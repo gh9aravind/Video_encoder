@@ -33,6 +33,15 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("main") {
+            java.srcDirs(
+                "src/main/java",
+                "src/main/res/values/java"
+            )
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
